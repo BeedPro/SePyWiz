@@ -5,6 +5,8 @@ This script depends that gh, git, and nala are installed on the system.
 TODO: Need to have test coverage
 USEFUL functions: os.readlink()
 """
+from rich import print
+from rich.console import Console
 from typing import Any, List
 import os
 import zipfile
@@ -12,8 +14,20 @@ import subprocess
 import shutil
 import json
 
-if os.path.exists("applications_to_install.json"):
-    with open("applications_to_install.json", "r") as json_file:
+console = Console(color_system="truecolor")
+
+COLORS = {
+    "orange": "#FFC170",
+    "black": "#696363",
+    "teal": "#84DCCF",
+    "blue": "#A6D9F7",
+    "grey": "#BCCCE0",
+    "pink": "#BF98A0",
+}
+
+APPLICATION_INSTALL_JSON_PATH = "data/applications_to_install.json"
+if os.path.exists(APPLICATION_INSTALL_JSON_PATH):
+    with open(APPLICATION_INSTALL_JSON_PATH, "r") as json_file:
         DATA: Any = json.load(json_file)
         PACKAGES_TO_INSTALL: Any = DATA.get("apt_packages", [])
 else:
@@ -49,7 +63,7 @@ def is_package_installed(name: str) -> bool:
         return False
 
 
-def install_package(name: str):
+def install_package(name: str) -> bool:
     result: subprocess.CompletedProcess[bytes] = subprocess.run(
         ["sudo", "apt", "install", "-y", name],
         stdout=subprocess.PIPE,
@@ -57,9 +71,11 @@ def install_package(name: str):
     )
     if result.returncode == 0:
         print(f"{name} has been successfully installed.")
+        return True
     else:
         print(f"Error installing {name}. Return code: {result.returncode}")
         print(result.stderr.decode("utf-8"))
+        return False
 
 
 def install_packages():
@@ -75,7 +91,7 @@ def prepare_directories(file_name: str) -> str:
         dir_name: str = file_name
         file_name += ".AppImage"
     else:
-        dir_name, _ = os.path.splitext(file_name)
+        dir_name: str = os.path.splitext(file_name)[0]
 
     app_images_folder: str = os.path.expanduser("~/.local/AppImages/")
     if not os.path.exists(app_images_folder):
@@ -239,19 +255,28 @@ def wizard_quit():
 
 
 def get_mode() -> str:
-    print("Welcome to Beed's dotfiles,")
+    os.system("clear")
+    print(f"Welcome to [{COLORS['orange']}]SePyWiz[{COLORS['orange']}]")
     print(
         "This is the setup wizard for installation, syncing, repairing and also deletion."
     )
-    print("  - (I)nstallation")
-    print("  - (F)onts [Install fonts, by default this installs the Jetbrains font]")
-    print("  - (S)ync Laptop/Desktop dotfiles and apps")
-    print("  - (D)elete back to fresh [Not implemented]")
-    print("  - (Q)uit")
+    print(f"  - [bold]([{COLORS['teal']}]I[/{COLORS['teal']}])[/bold]nstallation")
+    print(
+        f"  - [bold]([{COLORS['blue']}]F[/{COLORS['blue']}])[/bold]onts [Install fonts, by default this installs the Jetbrains font]"
+    )
+    print(
+        f"  - [bold]([{COLORS['grey']}]S[/{COLORS['grey']}])[/bold]ync Laptop/Desktop dotfiles and apps"
+    )
+    print(
+        f"  - [bold]([{COLORS['black']}]D[/{COLORS['black']}])[/bold]elete back to fresh [Not implemented]"
+    )
+    print(f"  - [bold]([{COLORS['pink']}]Q[/{COLORS['pink']}])[/bold]uit")
     mode: str = input(">>> ")
     while mode.lower() not in VALID_MENU_OPTIONS:
         print("You have choosen an invalid option please enter a valid option")
-        print("Valid options: (I)nstall, (R)epair, (S)ync, (D)elete or (Q)uit")
+        print(
+            f"Valid options: [bold]([{COLORS['teal']}]I[/{COLORS['teal']}])[/bold]nstall, [bold]([{COLORS['blue']}]F[/{COLORS['blue']}])[/bold]onts, [bold]([{COLORS['grey']}]S[/{COLORS['grey']}])[/bold]ync, [bold]([{COLORS['black']}]D[/{COLORS['black']}])[/bold]elete or [bold]([{COLORS['pink']}]Q[/{COLORS['pink']}])[/bold]uit"
+        )
         mode: str = input(">>> ")
     if len(mode) > 1:
         return mode[0].lower()
