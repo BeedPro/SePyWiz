@@ -6,11 +6,44 @@ import zipfile
 
 
 class FontManager:
+    """
+    FontManager is a class for managing font downloads, extraction, installation, and updates.
+
+    Attributes:
+        None
+
+    Methods:
+        install_font
+    """
+
     def __init__(self) -> None:
+        """
+        FontManager is a class for managing font downloads, extraction, installation, and updates.
+
+        Attributes:
+            None
+
+        Methods:
+            install_font
+        """
         pass
 
     def __download_font(self, url: str, file_name: str) -> bool:
-        if not file_name.lower().endswith(".zip"):
+        """
+        Download a font file from a given URL and save it with a specified file name.
+
+        Args:
+            url (str): The URL of the font file to download.
+            file_name (str): The name of the font file to save.
+
+        Returns:
+            bool: True if the download is successful, False otherwise.
+        """
+        if not url.lower().endswith(".zip"):
+            print("File in the url being downloaded is not a zip file")
+            return False
+
+        elif not file_name.lower().endswith(".zip"):
             file_name += ".zip"
         download_path: str = os.path.expanduser(f"~/Downloads/{file_name}")
         response: subprocess.CompletedProcess[bytes] = subprocess.run(
@@ -19,6 +52,15 @@ class FontManager:
         return response.returncode == 0
 
     def __unzip_font(self, file_name: str) -> List[str]:
+        """
+        Unzip a font file and return a list of extracted files.
+
+        Args:
+            file_name (str): The name of the font file to unzip.
+
+        Returns:
+            List[str]: A list of file names that were extracted from the zip file.
+        """
         if not file_name.lower().endswith(".zip"):
             file_name += ".zip"
         zip_file_path: str = os.path.expanduser(f"~/Downloads/{file_name}")
@@ -31,6 +73,14 @@ class FontManager:
     def __move_font_to_directory(
         self, file_name: str, extracted_file_path: str, font_dir: str
     ):
+        """
+        Move font files from the extraction directory to the specified font directory.
+
+        Args:
+            file_name (str): The name of the font file.
+            extracted_file_path (str): The path to the directory containing extracted font files.
+            font_dir (str): The target directory to move the font files to.
+        """
         os.makedirs(font_dir, exist_ok=True)
         ttf_files: List[str] = [
             file
@@ -45,6 +95,12 @@ class FontManager:
         print(f"All the {file_name} fonts have been moved to {font_dir}")
 
     def __install_fonts(self, file_name: str):
+        """
+        Install the fonts and update the font cache.
+
+        Args:
+            file_name (str): The name of the font to install.
+        """
         result: subprocess.CompletedProcess[bytes] = subprocess.run(["fc-cache", "-fv"])
         if result.returncode == 0:
             print(
@@ -58,6 +114,17 @@ class FontManager:
             )
 
     def install_font(self, url: str, file_name: str):
+        """
+        Install a font from a URL.
+
+        Args:
+            url (str): The URL of the font file to download and install.
+            file_name (str): The name of the font file.
+
+        Example:
+            font_manager = FontManager()
+            font_manager.install_font("https://example.com/font.zip", "font_name")
+        """
         if self.__download_font(url, file_name):
             print(f"{file_name} has been downloaded")
             extracted_files: List[str] = self.__unzip_font(file_name)

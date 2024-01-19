@@ -8,8 +8,8 @@ from appiman import AppImageManager
 from packman import PackageManager
 from textui import TextUI
 
-console = Console(color_system="truecolor")
-config = Config()
+console: Console = Console(color_system="truecolor")
+config: Config = Config()
 
 
 class Wizard:

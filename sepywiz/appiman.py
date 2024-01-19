@@ -8,7 +8,7 @@ class AppImageManager:
     def __init__(self) -> None:
         pass
 
-    def prepare_directories(self, file_name: str) -> str:
+    def __prepare_directories(self, file_name: str) -> str:
         if not file_name.lower().endswith(".AppImage"):
             dir_name: str = file_name
             file_name += ".AppImage"
@@ -27,7 +27,7 @@ class AppImageManager:
 
         return os.path.expanduser(f"~/.local/AppImages/{dir_name}")
 
-    def download_file(
+    def __download_file(
         self, url: str, download_path: str
     ) -> subprocess.CompletedProcess:
         response: subprocess.CompletedProcess[bytes] = subprocess.run(
@@ -35,7 +35,7 @@ class AppImageManager:
         )
         return response
 
-    def set_permissions(self, file_path: str, file_name: str) -> None:
+    def __set_permissions(self, file_path: str, file_name: str) -> None:
         if os.path.exists(file_path):
             # Set permissions to 755
             os.chmod(f"{file_path}/{file_name}", 0o755)
@@ -43,7 +43,7 @@ class AppImageManager:
         else:
             print(f"File {file_path} not found.")
 
-    def extract_appimage(self, path: str, file_name: str) -> bool:
+    def __extract_appimage(self, path: str, file_name: str) -> bool:
         response: subprocess.CompletedProcess[bytes] = subprocess.run(
             [f"{path}/{file_name}", "--appimage-extract"]
         )
@@ -51,20 +51,20 @@ class AppImageManager:
         shutil.move(source_directory, path)
         return response.returncode == 0
 
-    def download_appimage(self, url: str, file_name: str) -> bool:
-        download_path: str = self.prepare_directories(file_name)
-        response: subprocess.CompletedProcess[Any] = self.download_file(
+    def __download_appimage(self, url: str, file_name: str) -> bool:
+        download_path: str = self.__prepare_directories(file_name)
+        response: subprocess.CompletedProcess[Any] = self.__download_file(
             url, f"{download_path}/{file_name}"
         )
-        self.set_permissions(download_path, file_name)
-        if self.extract_appimage(download_path, file_name):
+        self.__set_permissions(download_path, file_name)
+        if self.__extract_appimage(download_path, file_name):
             print("Extracted AppImage")
         else:
             print("AppImage failed to extract")
         return response.returncode == 0
 
     def install_appimage(self, url: str, name: str):
-        if self.download_appimage(url, name):
+        if self.__download_appimage(url, name):
             print(f"Downloaded {name}'s AppImage")
         else:
             print(f"{name} AppImage was not able to be downloaded")
