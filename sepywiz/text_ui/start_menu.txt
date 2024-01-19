@@ -1,0 +1,7 @@
+Welcome to [{colors['orange']}]SePyWiz[{colors['orange']}]
+This is the setup wizard for installation, syncing, repairing and also deletion.
+  - [bold]([{colors['teal']}]I[/{colors['teal']}])[/bold]nstallation
+  - [bold]([{colors['blue']}]F[/{colors['blue']}])[/bold]onts [Install fonts, by default this installs the Jetbrains font]
+  - [bold]([{colors['grey']}]S[/{colors['grey']}])[/bold]ync Laptop/Desktop dotfiles and apps"
+  - [bold]([{colors['black']}]D[/{colors['black']}])[/bold]elete back to fresh [Not implemented]"
+  - [bold]([{colors['pink']}]Q[/{colors['pink']}])[/bold]uit")
