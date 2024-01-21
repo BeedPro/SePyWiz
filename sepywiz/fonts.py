@@ -79,8 +79,6 @@ class FontManager:
         return (file_name, file_name_with_extension)
 
     # WARNING: Make this method testable since we cannot test failed extractions. Method crashes
-    # FIX: Should not extract to folder ending in .zip
-    # FIX: Should not throw error zip not found
     def __unzip_font(self, name: str) -> List[str]:
         """
         Unzip a font file and return a list of extracted files.
@@ -109,7 +107,7 @@ class FontManager:
 
     def __move_font_to_directory(
         self, file_name: str, extracted_file_path: str, font_dir: str
-    ):
+    ) -> bool:
         """
         Move font files from the extraction directory to the specified font directory.
 
@@ -119,19 +117,22 @@ class FontManager:
             font_dir (str): The target directory to move the font files to.
         """
         os.makedirs(font_dir, exist_ok=True)
+        extracted_files: List[str] = os.listdir(extracted_file_path)
         ttf_files: List[str] = [
-            file
-            for file in os.listdir(extracted_file_path)
-            if file.lower().endswith(".ttf")
+            file for file in extracted_files if file.lower().endswith(".ttf")
         ]
+        if not len(ttf_files):
+            print("No font files, no ttf files found")
+            return False
         for ttf_file in ttf_files:
             source_path: str = f"{extracted_file_path}/{ttf_file}"
             destination_path: str = f"{font_dir}/{ttf_file}"
             shutil.move(source_path, destination_path)
             print(f"{ttf_file} moved to {font_dir}")
         print(f"All the {file_name} fonts have been moved to {font_dir}")
+        return True
 
-    def __install_fonts(self, file_name: str):
+    def __install_fonts(self, file_name: str) -> bool:
         """
         Install the fonts and update the font cache.
 
@@ -145,12 +146,14 @@ class FontManager:
             )
             print("Check if the font has been installed by running:")
             print('`fc-list | grep "FONT_NAME"`')
+            return True
         else:
             print(
                 f"Error installing {file_name}. Error return code: {result.returncode}"
             )
+            return False
 
-    def install_font(self, url: str, file_name: str):
+    def install_font(self, url: str, file_name: str) -> bool:
         """
         Install a font from a URL.
 
@@ -162,17 +165,20 @@ class FontManager:
             font_manager = FontManager()
             font_manager.install_font("https://example.com/font.zip", "font_name")
         """
-        if self.__download_font(url, file_name):
-            print(f"{file_name} has been downloaded")
-            extracted_files: List[str] = self.__unzip_font(file_name)
-            if extracted_files:
-                print(f"{file_name} has been extracted in the Downloads directory")
-                font_dir: str = "~/.local/share/fonts"
-                self.__move_font_to_directory(
-                    file_name, f"~/Downloads/{file_name}", font_dir
-                )
-                self.__install_fonts(file_name)
-            else:
-                print("Extraction has failed or the zip file is empty")
-        else:
+        font_dir: str = "~/.local/share/fonts"
+        if not self.__download_font(url, file_name):
             print(f"{file_name} was not able to be downloaded.")
+            return False
+        print(f"{file_name} has been downloaded")
+        extracted_files: List[str] = self.__unzip_font(file_name)
+        if not extracted_files:
+            print("Extraction has failed or the zip file is empty")
+            return False
+        print(f"{file_name} has been extracted in the Downloads directory")
+        if not self.__move_font_to_directory(
+            file_name, f"~/Downloads/{file_name}", font_dir
+        ):
+            return False
+        if not self.__install_fonts(file_name):
+            return False
+        return True

@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.case import skip
 from unittest.mock import Mock, patch
 from sepywiz.fonts import FontManager
 
@@ -60,7 +61,13 @@ class TestUnzipFont(unittest.TestCase):
         result = self.font_manager._FontManager__unzip_font(f"{self.filename}.zip")  # type: ignore
         self.assertEqual(result, [])
 
-    # NOTE: Need to add this test to FontManager but do not know how to
+    # NOTE: Need to add this test to FontManager but do not know how to, I don't know if it has a fail condition
+    @skip("I don't understand how to test")
+    def test_non_zipfile(self):
+        pass
+
+    # NOTE: Need to add this test to FontManager but do not know how to, I don't know if it has a fail condition
+    @skip("I don't understand how to test")
     def test_failed_extraction(self):
         pass
 
