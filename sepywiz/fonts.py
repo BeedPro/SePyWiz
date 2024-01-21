@@ -1,5 +1,5 @@
 import subprocess
-from typing import List
+from typing import List, Tuple
 import os
 import shutil
 import zipfile
@@ -51,7 +51,37 @@ class FontManager:
         )
         return response.returncode == 0
 
-    def __unzip_font(self, file_name: str) -> List[str]:
+    def __get_filename_and_extension(self, file_name: str) -> Tuple[str, str]:
+        """
+        Extract the filename and its corresponding extension from a given filename.
+
+        Args:
+            file_name (str): The input filename, which may or may not include the ".zip" extension.
+
+        Returns:
+            Tuple[str, str]: A tuple containing two strings:
+                1. The filename without the ".zip" extension.
+                2. The original filename with the ".zip" extension (if not present, it is added).
+
+        Example:
+            filename, filename_with_extension = self.__get_filename_and_extension("my_font")
+            # Result: filename = "my_font", filename_with_extension = "my_font.zip"
+
+            filename, filename_with_extension = self.__get_filename_and_extension("another_font.zip")
+            # Result: filename = "another_font", filename_with_extension = "another_font.zip"
+        """
+        if file_name.lower().endswith(".zip"):
+            file_name_with_extension: str = file_name
+            file_name = file_name.replace(".zip", "")
+        else:
+            file_name_with_extension: str = f"{file_name}.zip"
+
+        return (file_name, file_name_with_extension)
+
+    # WARNING: Make this method testable since we cannot test failed extractions. Method crashes
+    # FIX: Should not extract to folder ending in .zip
+    # FIX: Should not throw error zip not found
+    def __unzip_font(self, name: str) -> List[str]:
         """
         Unzip a font file and return a list of extracted files.
 
@@ -61,9 +91,16 @@ class FontManager:
         Returns:
             List[str]: A list of file names that were extracted from the zip file.
         """
-        if not file_name.lower().endswith(".zip"):
-            file_name += ".zip"
-        zip_file_path: str = os.path.expanduser(f"~/Downloads/{file_name}")
+        file_name, file_name_with_extension = self.__get_filename_and_extension(name)
+
+        zip_file_path: str = os.path.expanduser(
+            f"~/Downloads/{file_name_with_extension}"
+        )
+
+        if not os.path.exists(zip_file_path):
+            # HACK: Should raise an error or not be shown here
+            print("The zip file does not exist")
+            return []
         extracted_file_path: str = os.path.expanduser(f"~/Downloads/{file_name}")
         os.makedirs(extracted_file_path, exist_ok=True)
         with zipfile.ZipFile(zip_file_path, "r") as zip_ref:

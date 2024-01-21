@@ -1,30 +1,87 @@
+import os
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import Mock, patch
 from sepywiz.fonts import FontManager
 
 
-# TODO: Need to mock os.makedirs, zipfile.ZipFile
-# TODO: And write the tests for these
+class MockZipFile:
+    def __init__(self, *args, **kwargs) -> None:
+        self._ = args
+        self._ = kwargs
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._ = exc_type
+        self._ = exc_value
+        self._ = traceback
+        pass
+
+    def extractall(self, extracted_file_path):
+        self._ = extracted_file_path
+        pass
+
+
+# WARNING: That patch is reversed into the arguments of the test method
 class TestUnzipFont(unittest.TestCase):
     def setUp(self):
         self.font_manager = FontManager()
+        self.filename = "filename"
+        self.extracted_file_path = os.path.expanduser(f"~/Downloads/{self.filename}")
 
-    def test_successful_extraction(self):
-        pass
+    @patch("sepywiz.fonts.os.path.exists")
+    @patch("sepywiz.fonts.os.makedirs")
+    @patch("sepywiz.fonts.os.listdir")
+    @patch("sepywiz.fonts.zipfile.ZipFile")
+    def test_successful_extraction_ending_zip(
+        self, mock_zipfile, mock_os_listdir, mock_os_makedirs, mock_os_path_exists
+    ):
+        mock_os_makedirs.return_value = None
+        fake_list = ["file1", "file2", "file3"]
+        mock_os_listdir.return_value = fake_list
+        mock_os_path_exists.return_value = True
+        mock_zipfile.__enter__ = Mock(return_value=fake_list)
 
-    def test_empty_zip_file_ending_zip(self):
-        pass
+        result = self.font_manager._FontManager__unzip_font(self.filename)  # type: ignore
 
-    def test_non_zip_extension_ending_zip(self):
-        pass
+        mock_os_makedirs.assert_called_once_with(
+            self.extracted_file_path, exist_ok=True
+        )
+        mock_os_listdir.assert_called_once_with(self.extracted_file_path)
+        self.assertEqual(result, fake_list)
 
-    def test_successful_extraction_not_ending_zip(self):
-        pass
+    @patch("sepywiz.fonts.os.path.exists")
+    @patch("sepywiz.fonts.os.makedirs")
+    @patch("sepywiz.fonts.os.listdir")
+    @patch("sepywiz.fonts.zipfile.ZipFile")
+    def test_successful_extraction_not_ending_zip(
+        self, mock_zipfile, mock_os_listdir, mock_os_makedirs, mock_os_path_exists
+    ):
+        mock_os_makedirs.return_value = None
+        mock_os_path_exists.return_value = True
+        fake_list = ["file1", "file2", "file3"]
+        mock_os_listdir.return_value = fake_list
+        mock_zipfile.__enter__ = Mock(return_value=fake_list)
 
-    def test_empty_zip_file_not_ending_zip(self):
-        pass
+        result = self.font_manager._FontManager__unzip_font(f"{self.filename}.zip")  # type: ignore
 
-    def test_non_zip_extension_not_ending_zip(self):
+        mock_os_makedirs.assert_called_once_with(
+            self.extracted_file_path, exist_ok=True
+        )
+        mock_os_listdir.assert_called_once_with(self.extracted_file_path)
+        self.assertEqual(result, fake_list)
+
+    @patch("sepywiz.fonts.os.path.exists", return_value=False)
+    @patch("sepywiz.fonts.os.makedirs", return_value=None)
+    @patch("sepywiz.fonts.os.listdir", return_value=None)
+    def test_file_not_found(self, *_):
+        result = self.font_manager._FontManager__unzip_font(f"{self.filename}.zip")  # type: ignore
+        self.assertEqual(result, [])
+
+    # NOTE: Need to add this test to FontManager but do not know how to
+    def test_failed_extraction(self):
         pass
 
 
