@@ -4,26 +4,6 @@ from unittest.mock import Mock, patch
 from sepywiz.fonts import FontManager
 
 
-class MockZipFile:
-    def __init__(self, *args, **kwargs) -> None:
-        self._ = args
-        self._ = kwargs
-        pass
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self._ = exc_type
-        self._ = exc_value
-        self._ = traceback
-        pass
-
-    def extractall(self, extracted_file_path):
-        self._ = extracted_file_path
-        pass
-
-
 # WARNING: That patch is reversed into the arguments of the test method
 class TestUnzipFont(unittest.TestCase):
     def setUp(self):
