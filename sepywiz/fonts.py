@@ -5,6 +5,7 @@ import shutil
 import zipfile
 
 
+# NOTE: I think it is better practise to raise an exception rather than a print statement
 class FontManager:
     """
     FontManager is a class for managing font downloads, extraction, installation, and updates.
