@@ -43,7 +43,7 @@ class TestPrepareDirectories(unittest.TestCase):
         filename = ""
         with self.assertRaises(ValueError) as context:
             self.prepare_directories(filename)
-        self.assertEqual(context.exception.__str__(), "File name given is empty")
+        self.assertEqual(str(context.exception), "File name given is empty")
 
 
 if __name__ == "__main__":
