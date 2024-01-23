@@ -3,11 +3,11 @@ import os
 from rich import print
 from rich.console import Console
 
-import config
-import fonts
-import appiman
-import packman
-import textui
+from .config import Config
+from .fonts import FontManager
+from .appiman import AppImageManager
+from .packman import PackageManager
+from .textui import TextUI
 
 console: Console = Console(color_system="truecolor")
 
@@ -40,11 +40,11 @@ class Wizard:
         Config, TextUI, FontManager, PackageManager, and AppImageManager classes to
         manage various tasks.
         """
-        self.__config: config.Config = config.Config()
-        self.__textui: textui.TextUI = textui.TextUI()
-        self.__font_manager: fonts.FontManager = fonts.FontManager()
-        self.__package_manager: packman.PackageManager = packman.PackageManager()
-        self.__appimage_manager: appiman.AppImageManager = appiman.AppImageManager()
+        self.__config: Config = Config()
+        self.__textui: TextUI = TextUI()
+        self.__font_manager: FontManager = FontManager()
+        self.__package_manager: PackageManager = PackageManager()
+        self.__appimage_manager: AppImageManager = AppImageManager()
 
     def get_mode(self):
         """

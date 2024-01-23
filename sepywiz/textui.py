@@ -1,10 +1,11 @@
-import config
+from typing import Dict
+from sepywiz.config import Config
 
 
 class TextUI:
     def __init__(self) -> None:
-        self.__config = config.Config()
-        self.__colors = self.__config.get_colors()
+        self.__config: Config = Config()
+        self.__colors: Dict[str, str] = self.__config.get_colors()
 
     def get_start_menu_text(self) -> str:
         return (
