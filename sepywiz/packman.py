@@ -1,5 +1,5 @@
 import subprocess
-from sepywiz.config import Config
+import config
 
 
 class PackageManager:
@@ -20,7 +20,7 @@ class PackageManager:
         This constructor initializes the PackageManager class and creates an instance
         of the Config class to manage package configuration.
         """
-        self.__config = Config()
+        self.__config = config.Config()
 
     def __is_package_installed(self, name: str) -> bool:
         """

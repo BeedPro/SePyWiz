@@ -2,14 +2,14 @@ from typing import List
 import os
 from rich import print
 from rich.console import Console
-from sepywiz.config import Config
-from sepywiz.fonts import FontManager
-from sepywiz.appiman import AppImageManager
-from sepywiz.packman import PackageManager
-from sepywiz.textui import TextUI
+
+import config
+import fonts
+import appiman
+import packman
+import textui
 
 console: Console = Console(color_system="truecolor")
-config: Config = Config()
 
 
 class Wizard:
@@ -40,11 +40,11 @@ class Wizard:
         Config, TextUI, FontManager, PackageManager, and AppImageManager classes to
         manage various tasks.
         """
-        self.__config: Config = Config()
-        self.__textui: TextUI = TextUI()
-        self.__font_manager: FontManager = FontManager()
-        self.__package_manager: PackageManager = PackageManager()
-        self.__appimage_manager: AppImageManager = AppImageManager()
+        self.__config: config.Config = config.Config()
+        self.__textui: textui.TextUI = textui.TextUI()
+        self.__font_manager: fonts.FontManager = fonts.FontManager()
+        self.__package_manager: packman.PackageManager = packman.PackageManager()
+        self.__appimage_manager: appiman.AppImageManager = appiman.AppImageManager()
 
     def get_mode(self):
         """

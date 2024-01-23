@@ -1,11 +1,10 @@
-from sepywiz.config import Config
-
-config = Config()
+import config
 
 
 class TextUI:
     def __init__(self) -> None:
-        self.__colors = config.get_colors()
+        self.__config = config.Config()
+        self.__colors = self.__config.get_colors()
 
     def get_start_menu_text(self) -> str:
         return (
