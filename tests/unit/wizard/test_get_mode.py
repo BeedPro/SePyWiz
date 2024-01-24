@@ -1,4 +1,5 @@
 import unittest
+from unittest.case import skip
 from unittest.mock import patch
 from sepywiz.wizard import Wizard
 
@@ -27,9 +28,11 @@ class TestGetMode(unittest.TestCase):
         result = self.wizard.get_mode()
         self.assertEqual(expected, result)
 
+    @skip("Not implemented")
     def test_invalid_input(self):
         pass
 
+    @skip("Not implemented")
     def test_empty_input(self):
         pass
 

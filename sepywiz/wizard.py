@@ -93,7 +93,7 @@ class Wizard:
         print("You have choosen Installation")
         print("(P)ackages, (A)ppImages, (Q)uit")
         choice: str = input(">>> ").lower()[0]
-        valid_install_options: List[str] = config.get_valid_install_options()
+        valid_install_options: List[str] = self.__config.get_valid_install_options()
         while choice not in valid_install_options:
             print("Not a valid input")
             choice = input(">>> ")
