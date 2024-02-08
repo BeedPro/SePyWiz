@@ -1,12 +1,3 @@
-   _____      _____    __          ___
-  / ____|    |  __ \   \ \        / (_)
- | (___   ___| |__) |   \ \  /\  / / _ ____
-  \___ \ / _ \  ___/ | | \ \/  \/ / | |_  /
-  ____) |  __/ |   | |_| |\  /\  /  | |/ /
- |_____/ \___|_|    \__, | \/  \/   |_/___|
-                     __/ |
-                    |___/
-
 # SePyWiz - Snakes can be wizards too
 SePyWiz serves as a bridge for Linux beginners, helping them navigate their way towards becoming more proficient users. It offers two primary interfaces:
 
